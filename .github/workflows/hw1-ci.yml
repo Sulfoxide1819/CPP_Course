@@ -2,8 +2,6 @@ name: HW-1 RPN calculator CI
 
 on:
   push:
-    paths:
-      - 'Homework_1/**'
 
   pull_request:
     branches: [main]
