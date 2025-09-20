@@ -1,0 +1,89 @@
+name: HW-1 RPN calculator CI
+
+on:
+  push:
+    path:
+      - 'Homework_1/**'
+
+  pull_request:
+    branches: [main]
+    path:
+      - 'Homework_1/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+       uses: actions/checkouts@v4
+
+      - name: Install clang-format
+      run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Check Google Style
+      run: find ./Homework_1 -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sanitizer: [none, address, undefined]
+        exclude:
+          - sanitizer: none
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          clang \
+       - name: Build with sanitizers
+       run: |
+    if [ "${{ matrix.sanitizer }}" = "address" ]; then
+     export CXX="clang++"  
+     export CXXFLAGS="-fsanitize=address -fno-omit-frame-pointer -g"
+     export LDFLAGS="-fsanitize=address"
+    elif [ "${{ matrix.sanitizer }}" = "undefined" ]; then
+     export CXX="clang++"
+     export CXXFLAGS="-fsanitize=undefined -fno-omit-frame-pointer -g"  
+     export LDFLAGS="-fsanitize=undefined"
+    fi 
+  
+    make -j$(nproc)
+
+      - name: Run tests with sanitizers
+      run: |
+        if [ "${{ matrix.sanitizer }}" = "address" ]; then
+          export ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+        elif [ "${{ matrix.sanitizer }}" = "undefined" ]; then
+          export UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1
+        fi
+
+        make -j$(nproc)
+
+  build-normal:
+    runs-on: ubuntu-latest
+    needs: lint  # Зависит от успешного прохождения линтера
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
+    - name: Build
+      run: make -j$(nproc)
+
+    - name: Run tests
+      run: make test
+
+
+
+
