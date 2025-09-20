@@ -83,7 +83,9 @@ jobs:
        make -j4
 
     - name: Run tests
-      run: make test
+      run: |
+       cd Homework_1
+       make test
 
 
 
