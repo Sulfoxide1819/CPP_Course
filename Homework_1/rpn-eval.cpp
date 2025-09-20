@@ -14,9 +14,12 @@ double computePostfix(std::queue<string> postfix);
 
 int main(int argc, char* argv[]) {
   string line;
-
+  string txt_file = "input.txt";
+  if (argc > 1) {
+    txt_file = argv[1];
+  }
   // Открываем входной и выходной файлы
-  std::ifstream in("input.txt");
+  std::ifstream in(txt_file);
   std::ofstream out("output.txt");
 
   // Проверяем, что файлы успешно открыты
