@@ -12,8 +12,8 @@ rpc-eval: text-editor
 clean: 
 	rm text-editor
 
-test: rpn-eval
-	./rpn-eval
+test: text-editor
+	echo 0 |./text-editor
 
 .PHONY: all test clean
 
