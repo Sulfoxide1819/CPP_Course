@@ -1,7 +1,8 @@
+#include "text_editor.h"
+
 #include <algorithm>
 #include <iostream>
 #include <string>
-#include "text_editor.h"
 
 using std::string;
 using TE = TextEditor;
@@ -14,8 +15,7 @@ string TE::getFullText() const {
   return result;
 }
 
-
-void TE::print() const{
+void TE::print() const {
   std::cout << getFullText() << std::endl;
 };
 
