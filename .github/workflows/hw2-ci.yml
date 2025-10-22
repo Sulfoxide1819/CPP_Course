@@ -5,7 +5,7 @@ on:
     paths: 
      - 'Homework_2/**'
   pull_request:
-    branches: [main]
+    branches: [main, new_vim] 
     paths:
       - 'Homework_2/**'
 
