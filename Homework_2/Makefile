@@ -2,7 +2,7 @@ CXX ?= g++-14
 CXXFLAGS ?= -O2 -I./src
 LDFLAGS ?= -lgtest -lgtest_main -pthread
 
-all: text-editor text-editor-tests
+all: text-editor 
 
 text-editor: src/text_editor.cpp src/main.cpp 
 	$(CXX) $(CXXFLAGS) -o text-editor src/text_editor.cpp src/main.cpp
