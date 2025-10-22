@@ -1,19 +1,22 @@
 CXX ?= g++-14
-CXXFLAGS ?= -O2 
-LDFLAGS ?=
+CXXFLAGS ?= -O2 -I./src
+LDFLAGS ?= -lgtest -lgtest_main -pthread
 
-all: text-editor
+all: text-editor text-editor-tests
 
-rebuild: clean all
+text-editor: src/text_editor.cpp src/main.cpp 
+	$(CXX) $(CXXFLAGS) -o text-editor src/text_editor.cpp src/main.cpp
 
-rpc-eval: text-editor
-	$(CXX) $(CXXFLAGS) -o text-editor text-editor.cpp
+text-editor-tests: tests/tests.cpp src/text_editor.cpp
+	$(CXX) $(CXXFLAGS) -o text-editor-tests tests/tests.cpp src/text_editor.cpp $(LDFLAGS)
+
+test: text-editor-tests
+	./text-editor-tests
 
 clean: 
-	rm text-editor
+	rm text-editor text-editor-tests
 
-test: text-editor
-	echo 0 |./text-editor
+rebuild: clean all
 
 .PHONY: all test clean
 

@@ -1,0 +1,117 @@
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include "text_editor.h"
+
+using std::string;
+using TE = TextEditor;
+
+string TE::getFullText() const {
+  string result = left;
+  for (auto it = right.rbegin(); it != right.rend(); ++it) {
+    result += *it;
+  }
+  return result;
+}
+
+
+void TE::print() const{
+  std::cout << getFullText() << std::endl;
+};
+
+void TE::addText(const string& text) {
+  left += text;
+}
+
+int TE::deleteText(int k) {
+  k = std::min(k, static_cast<int>(left.size()));
+  left.erase(left.end() - k, left.end());
+  return k;
+}
+
+string TE::cursorLeft(int k) {
+  k = std::min(k, static_cast<int>(left.size()));
+
+  string move = left.substr(left.size() - k);
+  std::reverse(move.begin(), move.end());
+  right += move;
+
+  left.erase(left.end() - k, left.end());
+
+  return left;
+}
+
+string TE::cursorRight(int k) {
+  k = std::min(k, static_cast<int>(right.size()));
+  string move = right.substr(right.size() - k);
+  std::reverse(move.begin(), move.end());
+  left += move;
+
+  right.erase(right.end() - k, right.end());
+
+  return string(right.rbegin(), right.rend());
+}
+
+void te_cli(TextEditor& text) {
+  text.print();
+  printMenu();
+  bool exit = false;
+  while (!exit) {
+    short in = 0;
+    std::cin >> in;
+    switch (in) {
+      case 0: {
+        exit = true;
+        break;
+      }
+      case 2: {
+        string str;
+        std::cout << "Enter a text:";
+        std::cin >> str;
+        std::cout << std::endl;
+        text.addText(str);
+        break;
+      }
+      case 3: {
+        std::cout << "Enter a number of characters:";
+        size_t n;
+        std::cin >> n;
+        std::cout << "\n" << text.deleteText(n) << "\n";
+        break;
+      }
+      case 4: {
+        while (true) {
+          std::cout << "Enter a shift:";
+          int shift;
+          std::cin >> shift;
+          if (shift < 0) {
+            text.cursorLeft(-shift);
+          }
+          if (shift > 0) {
+            text.cursorRight(shift);
+          }
+          break;
+        }
+        break;
+      }
+      case 5: {
+        text.print();
+        break;
+      }
+      case 1:
+      default:
+        printMenu();
+        break;
+    }
+  }
+}
+
+void printMenu() {
+  std::cout << "Use the following commands:\n"
+            << "0 - to exit\n"
+            << "1 - to print menu\n"
+            << "2 - to add a text\n"
+            << "3 - to delete some characters\n"
+            << "4 - to move cursor\n"
+            << "5 - to print text\n";
+}
