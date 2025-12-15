@@ -1,40 +1,23 @@
+#include "text_editor.h"
+
 #include <algorithm>
 #include <iostream>
 #include <string>
 
 using std::string;
-
-class TextEditor {
-  string left;
-  string right;
-
- public:
-  TextEditor() = default;
-  void print() const;
-  void addText(const string& text);
-  int deleteText(int k);
-  string cursorLeft(int k);
-  string cursorRight(int k);
-};
-
-void te_cli(TextEditor& text);
-void printMenu();
-
-int main(int argc, char* argv[]) {
-  TextEditor text;
-  te_cli(text);
-
-  return 0;
-}
-
 using TE = TextEditor;
-void TE::print() const {
-  std::cout << left;
+
+string TE::getFullText() const {
+  string result = left;
   for (auto it = right.rbegin(); it != right.rend(); ++it) {
-    std::cout << *it;
+    result += *it;
   }
-  std::cout << std::endl;
+  return result;
 }
+
+void TE::print() const {
+  std::cout << getFullText() << std::endl;
+};
 
 void TE::addText(const string& text) {
   left += text;
