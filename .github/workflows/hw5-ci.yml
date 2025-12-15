@@ -6,11 +6,11 @@ env:
 on:
   push:
     paths: 
-     - '$DIR/**'
+     - 'Homework_5_array_template/**'
   pull_request:
     branches: [main]
     paths:
-      - '$DIR/**'
+      - 'Homework_5_array_template/**'
 
 jobs:
   lint:
