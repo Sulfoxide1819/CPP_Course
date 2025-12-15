@@ -23,7 +23,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang-format
 
       - name: Check Google Style
-        run: find ./$DIR -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+        run: find ./Homework_5_array_template -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
 
   build:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
          export LDFLAGS="-fsanitize=undefined"
          fi 
   
-         cd $DIR
+         cd Homework_5_array_template
          make -j4
 
       - name: Run tests with sanitizers
@@ -66,7 +66,7 @@ jobs:
          export UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1
          fi
 
-         cd $DIR
+         cd Homework_5_array_template
          make -j4
 
   build-normal:
@@ -82,10 +82,10 @@ jobs:
 
     - name: Build
       run: |
-       cd $DIR
+       cd Homework_5_array_template
        make -j4
 
     - name: Run tests
       run: |
-       cd $DIR
+       cd Homework_5_array_template
        make test
