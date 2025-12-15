@@ -1,0 +1,91 @@
+name: HW-5 Array template CI
+
+env:
+  DIR: Homework_5_array_template
+  
+on:
+  push:
+    paths: 
+     - '$DIR/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '$DIR/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Check Google Style
+        run: find ./$DIR -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sanitizer: [none, address, undefined]
+        exclude:
+          - sanitizer: none
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Install dependencies
+        run: |
+         sudo apt-get update
+         sudo apt-get install -y \
+          build-essential \
+          clang \
+      - name: Build with sanitizers
+        run: |
+         if [ "${{ matrix.sanitizer }}" = "address" ]; then
+         export CXX="clang++"  
+         export CXXFLAGS="-fsanitize=address -fno-omit-frame-pointer -g"
+         export LDFLAGS="-fsanitize=address"
+         elif [ "${{ matrix.sanitizer }}" = "undefined" ]; then
+         export CXX="clang++"
+         export CXXFLAGS="-fsanitize=undefined -fno-omit-frame-pointer -g"  
+         export LDFLAGS="-fsanitize=undefined"
+         fi 
+  
+         cd $DIR
+         make -j4
+
+      - name: Run tests with sanitizers
+        run: |
+         if [ "${{ matrix.sanitizer }}" = "address" ]; then
+         export ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+         elif [ "${{ matrix.sanitizer }}" = "undefined" ]; then
+         export UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1
+         fi
+
+         cd $DIR
+         make -j4
+
+  build-normal:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update 
+        sudo apt-get install -y build-essential g++-14
+
+    - name: Build
+      run: |
+       cd $DIR
+       make -j4
+
+    - name: Run tests
+      run: |
+       cd $DIR
+       make test
