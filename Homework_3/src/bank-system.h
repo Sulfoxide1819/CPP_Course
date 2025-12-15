@@ -12,7 +12,8 @@ class BankAccount {
   std::string accountHolder;
 
  public:
-  BankAccount(std::string accountNumber, double balance, std::string accountHolder);
+  BankAccount(std::string accountNumber, double balance,
+              std::string accountHolder);
   void deposit(double amount);
   void withdraw(double amount);
   double getBalance() const;
